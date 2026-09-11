@@ -1,7 +1,12 @@
 name: Nothing Phone 3 Stock Tracker
 
 on:
-  workflow_dispatch: {}   # triggered manually, or automatically via cron-job.org
+  workflow_dispatch:
+    inputs:
+      force_notify:
+        description: "Send status update regardless of change"
+        required: false
+        default: "false"
 
 concurrency:
   group: np3-tracker
@@ -32,6 +37,7 @@ jobs:
           SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
           REMINDER_EVERY_N_RUNS: "0"
           TEST_MODE: "false"
+          FORCE_NOTIFY: ${{ github.event.inputs.force_notify }}
         run: python tracker.py
 
       - name: Persist state
