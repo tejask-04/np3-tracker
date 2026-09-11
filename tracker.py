@@ -99,9 +99,21 @@ def parse_availability(html):
     title = title_el.get_text(strip=True) if title_el else None
 
     price = None
-    price_el = soup.select_one(".a-price .a-offscreen")
-    if price_el:
-        price = price_el.get_text(strip=True)
+    # Look for price in the main product section (avoid accessories)
+    price_whole = soup.select_one(".a-price-whole")
+    price_fraction = soup.select_one(".a-price-fraction")
+    if price_whole:
+        # Extract just the rupee amount, filter out small prices (accessories)
+        price_text = price_whole.get_text(strip=True).replace(",", "")
+        try:
+            amount = int(price_text.replace("₹", ""))
+            if amount > 30000:  # Product is ~₹51k, so anything less is likely an accessory
+                if price_fraction:
+                    price = f"{price_text}{price_fraction.get_text(strip=True)}"
+                else:
+                    price = price_text
+        except (ValueError, AttributeError):
+            pass
 
     # Amazon's out-of-stock / unavailable signals
     unavailable_markers = [
