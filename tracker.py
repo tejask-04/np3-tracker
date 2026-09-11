@@ -240,6 +240,10 @@ def main():
 
     html = fetch_page(PRODUCT_URL)
 
+    if html is None and SCRAPERAPI_KEY:
+        print("Direct fetch failed/blocked — falling back to ScraperAPI...")
+        html = fetch_via_scraperapi(PRODUCT_URL)
+
     if html is None:
         state["consecutive_failures"] = state.get("consecutive_failures", 0) + 1
         save_state(state)
