@@ -24,6 +24,8 @@ from bs4 import BeautifulSoup
 
 # ---- Config -----------------------------------------------------------
 
+TEST_MODE = os.environ.get("TEST_MODE", "").lower() == "true"
+
 ASIN = "B0F7R82LHJ"
 PRODUCT_URL = f"https://www.amazon.in/dp/{ASIN}"
 PRODUCT_LABEL = "Nothing Phone (3) White 16GB/512GB"
