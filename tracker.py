@@ -188,6 +188,19 @@ def save_state(state):
 
 
 def main():
+    print(f"TEST_MODE active. Bot token present: {bool(TELEGRAM_BOT_TOKEN)}")
+    print(f"Chat ID present: {bool(TELEGRAM_CHAT_ID)}")
+    if TEST_MODE:
+        test_msg = (
+            "✅ Test Mode Active\n"
+            "The NP3 tracker is running and can send messages.\n"
+            "Disable TEST_MODE once you're confident."
+        )
+        sent = send_telegram_message(test_msg)
+        if sent:
+            print("✅ Test message confirmed sent by Telegram API.")
+        else:
+            print("❌ Test message FAILED — see error above.")
     state = load_state()
 
     html = fetch_page(PRODUCT_URL)
