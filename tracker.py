@@ -39,6 +39,7 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 REMINDER_EVERY_N_RUNS = int(os.environ.get("REMINDER_EVERY_N_RUNS", "0"))
 # Optional fallback: only used if direct requests get blocked by Amazon
 SCRAPERAPI_KEY = os.environ.get("SCRAPERAPI_KEY", "").strip()
+FORCE_NOTIFY = os.environ.get("FORCE_NOTIFY", "").lower() == "true"
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -287,6 +288,9 @@ def main():
     ):
         should_alert = True
         header = "🔔 Still in stock (reminder)"
+    elif FORCE_NOTIFY:
+        should_alert = True
+        header = "✅ In stock" if now_in_stock else "❌ Currently out of stock"
 
     if should_alert:
         price_line = f"\n💰 Price: {result['price']}" if result["price"] else ""
