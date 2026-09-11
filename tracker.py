@@ -37,6 +37,8 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 # Send a reminder even if still in stock, once every N runs (0 = never)
 REMINDER_EVERY_N_RUNS = int(os.environ.get("REMINDER_EVERY_N_RUNS", "0"))
+# Optional fallback: only used if direct requests get blocked by Amazon
+SCRAPERAPI_KEY = os.environ.get("SCRAPERAPI_KEY", "").strip()
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -87,6 +89,37 @@ def fetch_page(url, max_retries=4):
         if attempt < max_retries:
             sleep_s = (2 ** attempt) + random.uniform(0, 1.5)
             time.sleep(sleep_s)
+    return None
+  
+def fetch_via_scraperapi(url, max_retries=2):
+    """
+    Fallback fetch through ScraperAPI (free tier: ~1,000 requests/month).
+    Only called when SCRAPERAPI_KEY is set AND the direct fetch failed.
+    """
+    if not SCRAPERAPI_KEY:
+        return None
+
+    endpoint = "http://api.scraperapi.com/"
+    params = {
+        "api_key": SCRAPERAPI_KEY,
+        "url": url,
+        "country_code": "in",  # route through an Indian IP
+    }
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            resp = requests.get(endpoint, params=params, timeout=70)
+            if resp.status_code == 200 and "captcha" not in resp.text.lower()[:5000]:
+                return resp.text
+            print(
+                f"[ScraperAPI attempt {attempt}] status={resp.status_code} "
+                f"len={len(resp.text)}"
+            )
+        except requests.RequestException as e:
+            print(f"[ScraperAPI attempt {attempt}] request error: {e}")
+
+        if attempt < max_retries:
+            time.sleep(3)
     return None
 
 
