@@ -223,8 +223,9 @@ def save_state(state):
 
 
 def main():
-    print(f"TEST_MODE active. Bot token present: {bool(TELEGRAM_BOT_TOKEN)}")
-    print(f"Chat ID present: {bool(TELEGRAM_CHAT_ID)}")
+    if TEST_MODE:
+        print(f"TEST_MODE active. Bot token present: {bool(TELEGRAM_BOT_TOKEN)}")
+        print(f"Chat ID present: {bool(TELEGRAM_CHAT_ID)}")
     if TEST_MODE:
         test_msg = (
             "✅ Test Mode Active\n"
