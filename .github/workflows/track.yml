@@ -29,6 +29,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           REMINDER_EVERY_N_RUNS: "0"
+          TEST_MODE: "true"
         run: python tracker.py
 
       - name: Persist state
