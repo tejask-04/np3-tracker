@@ -1,5 +1,5 @@
 {
-  "last_in_stock": true,
-  "consecutive_checks": 88,
+  "last_in_stock": false,
+  "consecutive_checks": 89,
   "consecutive_failures": 0
 }
